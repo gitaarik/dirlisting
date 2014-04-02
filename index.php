@@ -305,7 +305,7 @@ $order_css_classes = get_order_css_classes(
 );
 
 $css_border_radius = '7px';
-$css_horizontal_padding = '10px';
+$css_horizontal_margin = '10px';
 
 ?>
 <!DOCTYPE html>
@@ -321,7 +321,7 @@ $css_horizontal_padding = '10px';
 
             html, body {
                 font-family: Verdana, sans-serif;
-                font-size: 15px;
+                font-size: 14px;
                 margin: 0;
                 padding: 0.5%;
             }
@@ -367,7 +367,7 @@ $css_horizontal_padding = '10px';
             }
 
             table thead th {
-                padding: 10px <?=$css_horizontal_padding?>;
+                padding: 10px <?=$css_horizontal_margin?>;
                 text-align: left;
                 font-weight: bold;
                 background: #CCC;
@@ -407,7 +407,21 @@ $css_horizontal_padding = '10px';
             }
 
             table tbody td {
-                padding: 8px <?=$css_horizontal_padding?>;
+                padding: 8px <?=$css_horizontal_margin?>;
+            }
+
+            table tbody td .folder-icon,
+            table tbody td .file-icon {
+                width: 20px;
+                height: 16px;
+                float: left;
+                margin-right: <?=$css_horizontal_margin?>;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
+
+            table tbody td a {
+                float: left;
             }
 
         </style>
@@ -469,7 +483,7 @@ $css_horizontal_padding = '10px';
                             ?>
                         </td>
                         <td class="date">
-                            <?=date("d F Y H:i", $file['date'])?>
+                            <?=date("j F Y H:i", $file['date'])?>
                         </td>
                         <td class="size">
                             <?
