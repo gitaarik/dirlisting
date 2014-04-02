@@ -140,13 +140,22 @@ function order_dirs_on_top($files) {
  * Makes a float human readable.
  *
  * Will round the float to the given `$precision` and will zero-fill to
- * the given `$precision`.
+ * the given `$precision`, unless the float ends in two zero's, then it
+ * will leave away the dot and the zero's.
  */
 function human_readable_float($float, $precision = 2) {
-    return number_format(
+
+    $float = number_format(
         round($float, $precision),
         $precision
     );
+
+    if (substr($float, -3) == '.00') {
+        $float = substr($float, 0, -3);
+    }
+
+    return $float;
+
 }
 
 /**
