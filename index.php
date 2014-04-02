@@ -283,7 +283,6 @@ $reverse_order_keys = ['size', 'date'];
 $dir_path_arr = get_dir_path_arr();
 $dir_path = implode('/', $dir_path_arr);
 $parent_dir_path = get_parent_dir_path($dir_path_arr);
-
 $dirname = get_dirname($dir_path_arr);
 
 list(
@@ -292,11 +291,21 @@ list(
     $order_reverse_direction,
     $order_params
 ) = get_order($order_keys, $reverse_order_keys);
-$files = order_dirs_on_top(order_files(get_files($dir_path), $order_active_key, $order_reverse_direction));
-$order_css_classes = get_order_css_classes($order_keys, $order_active_key, $order_reverse_direction);
 
+$files = order_dirs_on_top(order_files(
+    get_files($dir_path),
+    $order_active_key,
+    $order_reverse_direction
+));
+
+$order_css_classes = get_order_css_classes(
+    $order_keys,
+    $order_active_key,
+    $order_reverse_direction
+);
 
 $css_border_radius = '7px';
+$css_horizontal_padding = '10px';
 
 ?>
 <!DOCTYPE html>
@@ -304,15 +313,15 @@ $css_border_radius = '7px';
 
     <head>
 
-        <title>Index of <?=$dirname?></title>
-
-        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+        <meta charset="utf-8">
+        <title><?=$dirname?></title>
+        <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0">
 
         <style type="text/css">
 
             html, body {
-                font-family: courier, sans-serif;
+                font-family: Verdana, sans-serif;
+                font-size: 15px;
                 margin: 0;
                 padding: 0.5%;
             }
@@ -358,7 +367,7 @@ $css_border_radius = '7px';
             }
 
             table thead th {
-                padding: 10px 5px;
+                padding: 10px <?=$css_horizontal_padding?>;
                 text-align: left;
                 font-weight: bold;
                 background: #CCC;
@@ -369,18 +378,19 @@ $css_border_radius = '7px';
                 background: #DDD;
             }
 
-            table thead .order-asc a:after,
-            table thead .order-desc a:after {
-                padding-left: 5px;
-                font-size: 11px;
+            table thead .order-asc .order-icon,
+            table thead .order-desc .order-icon {
+                float: right;
+                width: 16px;
+                height: 16px;
+                background: url('data:image/gif;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAANUlEQVQ4jWNgGAWEQDkUkwUaGBgY/kNxAyWaSTYEm2aiDcGnmaAhxGjGaQgpmskO2FGAAwAAx7QwxeVl/3sAAAAASUVORK5CYII=');
             }
 
-            table thead .order-desc a:after {
-                content: '\25BE';
+            table thead .order-asc .order-icon {
             }
 
-            table thead .order-asc a:after {
-                content: '\25B4';
+            table thead .order-desc .order-icon {
+                transform: rotate(180deg);
             }
 
             table tbody tr:nth-child(2n) td {
@@ -397,7 +407,7 @@ $css_border_radius = '7px';
             }
 
             table tbody td {
-                padding: 8px 5px;
+                padding: 8px <?=$css_horizontal_padding?>;
             }
 
         </style>
@@ -406,7 +416,7 @@ $css_border_radius = '7px';
 
     <body>
 
-        <h1>Index of <?=$dirname?></h1>
+        <h1><?=$dirname?></h1>
 
         <table>
 
@@ -414,12 +424,15 @@ $css_border_radius = '7px';
                 <tr>
                     <th class="name <?=$order_css_classes['name']?>">
                         <a href="?dir=<?=rawurlencode($dir_path)?>&order=<?=$order_params['name']?>">Name</a>
+                        <div class="order-icon"></div>
                     </th>
                     <th class="date <?=$order_css_classes['date']?>">
                         <a href="?dir=<?=rawurlencode($dir_path)?>&order=<?=$order_params['date']?>">Date</a>
+                        <div class="order-icon"></div>
                     </th>
                     <th class="size <?=$order_css_classes['size']?>">
                         <a href="?dir=<?=rawurlencode($dir_path)?>&order=<?=$order_params['size']?>">Size</a>
+                        <div class="order-icon"></div>
                     </th>
                 </tr>
             </thead>
