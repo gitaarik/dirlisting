@@ -295,6 +295,9 @@ list(
 $files = order_dirs_on_top(order_files(get_files($dir_path), $order_active_key, $order_reverse_direction));
 $order_css_classes = get_order_css_classes($order_keys, $order_active_key, $order_reverse_direction);
 
+
+$css_border_radius = '7px';
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -326,34 +329,44 @@ $order_css_classes = get_order_css_classes($order_keys, $order_active_key, $orde
 
             table {
                 width: 100%;
-                border-collapse: collapse;
+                border-spacing: 0;
+                border: solid 1px #AAA;
+                border-width: 1px 0 1px 1px;
+                border-radius: <?=$css_border_radius?>;
             }
 
             table th,
             table td {
-                text-align: left;
-                padding: 5px;
-            }
-
-            table td {
                 cursor: pointer;
+                border-right: solid 1px #AAA;
             }
 
-            table .size,
-            table .date {
-                text-align: right;
+            table tr:first-child th:first-child {
+                border-top-left-radius: <?=$css_border_radius?>;
             }
 
-            table tbody tr:nth-child(2n) {
-                background-color: #FAFAFA;
+            table tr:first-child th:last-child {
+                border-top-right-radius: <?=$css_border_radius?>;
             }
 
-            table tbody tr:nth-child(2n + 1) {
-                background-color: #F0F0F0;
+            table tr:last-child td:first-child {
+                border-bottom-left-radius: <?=$css_border_radius?>;
             }
 
-            table tbody tr:hover {
-                background-color: #DDD;
+            table tr:last-child td:last-child {
+                border-bottom-right-radius: <?=$css_border_radius?>;
+            }
+
+            table thead th {
+                padding: 10px 5px;
+                text-align: left;
+                font-weight: bold;
+                background: #CCC;
+            }
+
+            table thead th:hover,
+            table thead th:active {
+                background: #DDD;
             }
 
             table thead .order-asc a:after,
@@ -368,6 +381,23 @@ $order_css_classes = get_order_css_classes($order_keys, $order_active_key, $orde
 
             table thead .order-asc a:after {
                 content: '\25B4';
+            }
+
+            table tbody tr:nth-child(2n) td {
+                background-color: #FAFAFA;
+            }
+
+            table tbody tr:nth-child(2n + 1) td {
+                background-color: #F0F0F0;
+            }
+
+            table tbody tr:hover td,
+            table tbody tr:active td {
+                background-color: #DDD;
+            }
+
+            table tbody td {
+                padding: 8px 5px;
             }
 
         </style>
@@ -447,15 +477,30 @@ $order_css_classes = get_order_css_classes($order_keys, $order_active_key, $orde
 
         <script>
 
-            document.querySelector('table tbody').addEventListener('click', function(event) {
+            /**
+             * Will look for the first parentNode of `click_source`
+             * which has a tagName that's equal to
+             * `parent_element_tagname` and will open the first link in
+             * this node.
+             */
+            function open_first_link(click_source, parent_element_tagname) {
 
-                var el = event.target;
-                while (el.tagName != "TR") {
+                var el = click_source;
+
+                while (el.tagName != parent_element_tagname) {
                     el = el.parentNode;
                 }
 
-                window.location = el.querySelector('.name a').getAttribute('href');
+                window.location = el.querySelector('a').getAttribute('href');
 
+            }
+
+            document.querySelector('table tbody').addEventListener('click', function(event) {
+                open_first_link(event.target, 'TR');
+            });
+
+            document.querySelector('table thead').addEventListener('click', function(event) {
+                open_first_link(event.target, 'TH');
             });
 
         </script>
