@@ -8,6 +8,8 @@ feature found in Apache/Nginx.
 Just put this single PHP file in the directory you want to list, and all
 underlying files and folders will be browsable in a nice UI.
 
+Demo at: http://televisionsmostpopularartinstructors.com/demo/
+
 ## Screenshots
 
 ### Desktop
