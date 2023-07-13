@@ -11,39 +11,43 @@
  */
 function get_order($order_keys, $reverse_order_keys) {
 
-$order_active_key = '';
-$order_params = array_combine($order_keys, $order_keys);
+	$order_active_key = '';
+	$order_params = array_combine($order_keys, $order_keys);
 
-if ($_GET['order']) {
-$order_active_param = $_GET['order'];
-}
+	if ($_GET['order'] ?? null) {
+		$order_active_param = $_GET['order'];
+	}
+	else
+	{
+		$order_active_param = 0;
+	}
 
-if (substr($order_active_param, 0, 1) == '-') {
-$reverse_direction = true;
-$order_active_key = substr($order_active_param, 1);
-} else {
-$reverse_direction = false;
-$order_active_key = $order_active_param;
-}
+	if (substr($order_active_param, 0, 1) == '-') {
+		$reverse_direction = true;
+		$order_active_key = substr($order_active_param, 1);
+	} else {
+		$reverse_direction = false;
+		$order_active_key = $order_active_param;
+	}
 
-if (!in_array($order_active_key, $order_params)) {
-$order_active_key = 'name';
-}
+	if (!in_array($order_active_key, $order_params)) {
+		$order_active_key = 'name';
+	}
 
-if (!$reverse_direction) {
-$order_params[$order_active_key] = '-' . $order_active_key;
-}
+	if (!$reverse_direction) {
+		$order_params[$order_active_key] = '-' . $order_active_key;
+	}
 
-if (in_array($order_active_key, $reverse_order_keys)) {
-$reverse_direction = !$reverse_direction;
-}
+	if (in_array($order_active_key, $reverse_order_keys)) {
+		$reverse_direction = !$reverse_direction;
+	}
 
-return [
-$order_active_key,
-$order_active_param,
-$reverse_direction,
-$order_params
-];
+	return [
+		$order_active_key,
+		$order_active_param,
+		$reverse_direction,
+		$order_params
+	];
 
 }
 
@@ -60,28 +64,28 @@ $order_params
  */
 function get_files($dir) {
 
-$files = [];
-$filenames = glob($dir . '/*', GLOB_MARK);
+	$files = [];
+	$filenames = glob($dir . '/*', GLOB_MARK);
 
-foreach ($filenames as $filepath) {
+	foreach ($filenames as $filepath) {
 
-$is_dir = is_dir($filepath);
-$filename = substr($filepath, strlen($dir) + 1);
+		$is_dir = is_dir($filepath);
+		$filename = substr($filepath, strlen($dir) + 1);
 
-if ($dir == '.' && $filename == basename($_SERVER['PHP_SELF'])) {
-continue;
-}
+		if ($dir == '.' && $filename == basename($_SERVER['PHP_SELF'])) {
+			continue;
+		}
 
-$files[] = [
-'is_dir' => $is_dir,
-'name' => $filename,
-'date' => filemtime($filepath),
-'size' => filesize($filepath)
-];
+		$files[] = [
+			'is_dir' => $is_dir,
+			'name' => $filename,
+			'date' => filemtime($filepath),
+			'size' => filesize($filepath)
+		];
 
-}
+	}
 
-return $files;
+	return $files;
 
 }
 
@@ -94,24 +98,24 @@ return $files;
  */
 function order_files($files, $order_active_key, $reverse_direction) {
 
-usort(
-$files,
-function($a, $b) use ($order_active_key, $reverse_direction) {
+	usort(
+		$files,
+	   function($a, $b) use ($order_active_key, $reverse_direction) {
 
-if ($reverse_direction) {
-list($a, $b) = [$b, $a];
-}
+		   if ($reverse_direction) {
+			   list($a, $b) = [$b, $a];
+		   }
 
-if($order_active_key == 'name') {
-return strcasecmp($a[$order_active_key], $b[$order_active_key]);
-} else {
-return $a[$order_active_key] - $b[$order_active_key];
-}
+		   if($order_active_key == 'name') {
+			   return strcasecmp($a[$order_active_key], $b[$order_active_key]);
+		   } else {
+			   return $a[$order_active_key] - $b[$order_active_key];
+		   }
 
-}
-);
+	   }
+	);
 
-return $files;
+	return $files;
 
 }
 
@@ -121,18 +125,18 @@ return $files;
  */
 function order_dirs_on_top($files) {
 
-$dirs = [];
-$non_dirs = [];
+	$dirs = [];
+	$non_dirs = [];
 
-foreach ($files as $file) {
-if($file['is_dir']) {
-$dirs[] = $file;
-} else {
-$non_dirs[] = $file;
-}
-}
+	foreach ($files as $file) {
+		if($file['is_dir']) {
+			$dirs[] = $file;
+		} else {
+			$non_dirs[] = $file;
+		}
+	}
 
-return array_merge($dirs, $non_dirs);
+	return array_merge($dirs, $non_dirs);
 
 }
 
@@ -145,16 +149,16 @@ return array_merge($dirs, $non_dirs);
  */
 function human_readable_float($float, $precision = 2) {
 
-$float = number_format(
-round($float, $precision),
-$precision
-);
+	$float = number_format(
+		round($float, $precision),
+						   $precision
+	);
 
-if (substr($float, -3) == '.00') {
-$float = substr($float, 0, -3);
-}
+	if (substr($float, -3) == '.00') {
+		$float = substr($float, 0, -3);
+	}
 
-return $float;
+	return $float;
 
 }
 
@@ -167,24 +171,24 @@ return $float;
  */
 function bytes_to_human_readable($bytes, $precision = 2) {
 
-$kilobyte = 1024;
-$megabyte = $kilobyte * 1024;
-$gigabyte = $megabyte * 1024;
-$terabyte = $gigabyte * 1024;
+	$kilobyte = 1024;
+	$megabyte = $kilobyte * 1024;
+	$gigabyte = $megabyte * 1024;
+	$terabyte = $gigabyte * 1024;
 
-if (($bytes >= 0) && ($bytes < $kilobyte)) {
-return human_readable_float($bytes, $precision) . ' B';
-} elseif (($bytes >= $kilobyte) && ($bytes < $megabyte)) {
-return human_readable_float($bytes / $kilobyte, $precision) . ' KB';
-} elseif (($bytes >= $megabyte) && ($bytes < $gigabyte)) {
-return human_readable_float($bytes / $megabyte, $precision) . ' MB';
-} elseif (($bytes >= $gigabyte) && ($bytes < $terabyte)) {
-return human_readable_float($bytes / $gigabyte, $precision) . ' GB';
-} elseif ($bytes >= $terabyte) {
-return human_readable_float($bytes / $terabyte, $precision) . ' TB';
-} else {
-return human_readable_float($bytes, $precision) . ' B';
-}
+	if (($bytes >= 0) && ($bytes < $kilobyte)) {
+		return human_readable_float($bytes, $precision) . ' B';
+	} elseif (($bytes >= $kilobyte) && ($bytes < $megabyte)) {
+		return human_readable_float($bytes / $kilobyte, $precision) . ' KB';
+	} elseif (($bytes >= $megabyte) && ($bytes < $gigabyte)) {
+		return human_readable_float($bytes / $megabyte, $precision) . ' MB';
+	} elseif (($bytes >= $gigabyte) && ($bytes < $terabyte)) {
+		return human_readable_float($bytes / $gigabyte, $precision) . ' GB';
+	} elseif ($bytes >= $terabyte) {
+		return human_readable_float($bytes / $terabyte, $precision) . ' TB';
+	} else {
+		return human_readable_float($bytes, $precision) . ' B';
+	}
 
 }
 
@@ -197,16 +201,16 @@ return human_readable_float($bytes, $precision) . ' B';
  */
 function get_order_css_classes($order_keys, $order_active_key, $reverse_direction) {
 
-$order_css_classes = [];
+	$order_css_classes = [];
 
-foreach ($order_keys as $order_key) {
-$order_css_classes[$order_key] = (
-$order_key == $order_active_key ?
-'order-' . ($reverse_direction ? 'desc' : 'asc') : ''
-);
-}
+	foreach ($order_keys as $order_key) {
+		$order_css_classes[$order_key] = (
+			$order_key == $order_active_key ?
+			'order-' . ($reverse_direction ? 'desc' : 'asc') : ''
+		);
+	}
 
-return $order_css_classes;
+	return $order_css_classes;
 
 }
 
@@ -217,25 +221,25 @@ return $order_css_classes;
  */
 function get_dir_path_arr() {
 
-if ($_GET['dir']) {
-$dir_path_arr = explode('/', $_GET['dir']);
-} else {
-$dir_path_arr = ['.'];
-}
+	if ($_GET['dir'] ?? null) {
+		$dir_path_arr = explode('/', $_GET['dir']);
+	} else {
+		$dir_path_arr = ['.'];
+	}
 
-// Ignore dirs which name is two dots, because that will go a dir
-// higher. Very important for security!
-foreach ($dir_path_arr as $key => $dirname) {
-if ($dirname == '..') {
-unset($dir_path_arr[$key]);
-}
-}
+	// Ignore dirs which name is two dots, because that will go a dir
+	// higher. Very important for security!
+	foreach ($dir_path_arr as $key => $dirname) {
+		if ($dirname == '..') {
+			unset($dir_path_arr[$key]);
+		}
+	}
 
-if (!end($dir_path_arr)) {
-array_pop($dir_path_arr);
-}
+	if (!end($dir_path_arr)) {
+		array_pop($dir_path_arr);
+	}
 
-return $dir_path_arr;
+	return $dir_path_arr;
 
 }
 
@@ -245,14 +249,14 @@ return $dir_path_arr;
  */
 function get_parent_dir_path($dir_path_arr) {
 
-$parent_dir_path = $dir_path_arr;
-array_pop($parent_dir_path);
+	$parent_dir_path = $dir_path_arr;
+	array_pop($parent_dir_path);
 
-if (count($parent_dir_path) > 0) {
-return implode('/', $parent_dir_path);
-} else {
-return false;
-}
+	if (count($parent_dir_path) > 0) {
+		return implode('/', $parent_dir_path);
+	} else {
+		return false;
+	}
 
 }
 
@@ -260,7 +264,7 @@ return false;
  * Returns the name of the directory this file is located.
  */
 function get_base() {
-return preg_replace(':.*/:', '', dirname($_SERVER['PHP_SELF']));
+	return preg_replace(':.*/:', '', dirname($_SERVER['PHP_SELF']));
 }
 
 /**
@@ -268,13 +272,13 @@ return preg_replace(':.*/:', '', dirname($_SERVER['PHP_SELF']));
  */
 function get_dirname($dir_path_arr) {
 
-if (count($dir_path_arr) > 1) {
-$subdirs = implode('/', array_slice($dir_path_arr, 1)) . '/';
-} else {
-$subdirs = '';
-}
+	if (count($dir_path_arr) > 1) {
+		$subdirs = implode('/', array_slice($dir_path_arr, 1)) . '/';
+	} else {
+		$subdirs = '';
+	}
 
-return get_base() . '/' . $subdirs;
+	return get_base() . '/' . $subdirs;
 
 }
 
@@ -295,22 +299,22 @@ $parent_dir_path = get_parent_dir_path($dir_path_arr);
 $dirname = get_dirname($dir_path_arr);
 
 list(
-$order_active_key,
-$order_active_param,
-$order_reverse_direction,
-$order_params
+	$order_active_key,
+	$order_active_param,
+	$order_reverse_direction,
+	$order_params
 ) = get_order($order_keys, $reverse_order_keys);
 
 $files = order_dirs_on_top(order_files(
-get_files($dir_path),
-$order_active_key,
-$order_reverse_direction
+	get_files($dir_path),
+	$order_active_key,
+	$order_reverse_direction
 ));
 
 $order_css_classes = get_order_css_classes(
-$order_keys,
-$order_active_key,
-$order_reverse_direction
+	$order_keys,
+	$order_active_key,
+	$order_reverse_direction
 );
 
 $css_border_radius = '7px';
@@ -449,10 +453,8 @@ float: left;
 </th>
 </tr>
 </thead>
-
 <tbody>
 <?php
-
 if ($parent_dir_path) {
 ?>
 <tr>
@@ -464,7 +466,6 @@ if ($parent_dir_path) {
 </tr>
 <?php
 }
-
 foreach ($files as $file) {
 ?>
 <tr>
@@ -511,7 +512,7 @@ function open_first_link(click_source, parent_element_tagname) {
 var el = click_source;
 
 while (el.tagName != parent_element_tagname) {
-el = el.parentNode;
+	el = el.parentNode;
 }
 
 window.location = el.querySelector('a').getAttribute('href');
@@ -519,13 +520,12 @@ window.location = el.querySelector('a').getAttribute('href');
 }
 
 document.querySelector('table tbody').addEventListener('click', function(event) {
-open_first_link(event.target, 'TR');
+	open_first_link(event.target, 'TR');
 });
 
 document.querySelector('table thead').addEventListener('click', function(event) {
-open_first_link(event.target, 'TH');
+	open_first_link(event.target, 'TH');
 });
-
 </script>
 </body>
 </html>
